@@ -1,0 +1,26 @@
+#ifndef __{{class.cpp_name | upper}}_H__
+#define __{{class.cpp_name | upper}}_H__
+
+#include <iostream>
+#include <string>
+
+extern "C" {
+    #include <lauxlib.h>
+    #include <lua.h>
+    #include <lualib.h>
+}
+
+class {{class.cpp_name}} {
+public:
+    {{class.cpp_name}}();
+    ~{{class.cpp_name}}();
+    {% for prop in properties %}
+    {{prop.type}} {{prop.name}};
+    {% endfor %}
+
+    boolean loadFromLuaScript(lua_State *L, char *luaPath);
+
+private:
+}
+
+#endif  /* End __{{class.cpp_name | upper}}_H__ */

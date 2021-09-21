@@ -1,0 +1,13 @@
+# Player class, YAML spec for lua-to-cpp
+- class:
+  - cpp_name: "Player"
+  - properties:
+    - maxHealth:
+      type: number
+      default: 0
+    - name: "Roger Wilco"
+      type: string
+      default: "player"
+    - hasAmulet:
+      type: boolean
+      default: false
