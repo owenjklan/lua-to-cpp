@@ -12,7 +12,8 @@ extern "C" {
 {{class_spec.cpp_name}}::{{class_spec.cpp_name}}() {}
 {{class_spec.cpp_name}}::~{{class_spec.cpp_name}}() {}
 
-{{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, char *luaPath) {
+bool {{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, std::string *luaPath) {
     // hi there
+    return true;
 }
 
