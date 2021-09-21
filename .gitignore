@@ -2,6 +2,9 @@
 venv/
 .idea/
 
+# our default example program name
+example
+
 # We actually want to ignore any *.cpp and *.hpp files, we generate those
 # but we use .j2 templates in the repos.
 *.cpp

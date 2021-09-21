@@ -4,6 +4,12 @@
 #include <iostream>
 #include <string>
 
+extern "C" {
+    #include <lauxlib.h>
+    #include <lua.h>
+    #include <lualib.h>
+}
+
 class {{class_spec.cpp_name}} {
 public:
     {{class_spec.cpp_name}}();
@@ -12,7 +18,7 @@ public:
     {% for prop in class_spec.properties %}{{ "%-16s " | format(prop.cpp_type)}} {{prop.name}};
     {% endfor %}
 
-    bool loadFromLuaScript(lua_State *L, std::string *luaPath);
+    bool loadFromLuaScript(lua_State *L, const char *luaPath);
 
 private:
     // Private members go here

@@ -1,0 +1,20 @@
+#include <iostream>
+
+#include "{{class_spec.cpp_name}}.hpp"
+
+std::string exampleLuaPath = "example.lua";
+
+int main() {
+    lua_State *L = luaL_newstate();
+    {{class_spec.cpp_name}} {{class_spec.cpp_name | lower}};
+
+    // Open specified Lua libraries on our Lua VM/State
+    luaL_openlibs(L);
+
+    {{class_spec.cpp_name | lower}}.loadFromLuaScript(L, exampleLuaPath.c_str());
+
+    std::cout << "Example program finished." << std::endl;
+
+    lua_close(L);
+    return 0;
+}

@@ -1,19 +1,14 @@
 #include <iostream>
 #include <string>
 
-extern "C" {
-    #include <lauxlib.h>
-    #include <lua.h>
-    #include <lualib.h>
-}
-
 #include "{{class_spec.cpp_name}}.hpp"
 
 {{class_spec.cpp_name}}::{{class_spec.cpp_name}}() {}
 {{class_spec.cpp_name}}::~{{class_spec.cpp_name}}() {}
 
-bool {{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, std::string *luaPath) {
+bool {{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, const char *luaPath) {
     // hi there
+    std::cout << "{{class_spec.cpp_name}}::loadFromLuaScript() called." << std::endl;
     return true;
 }
 
