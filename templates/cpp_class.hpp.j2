@@ -1,26 +1,21 @@
-#ifndef __{{class.cpp_name | upper}}_H__
-#define __{{class.cpp_name | upper}}_H__
+#ifndef __{{class_spec.cpp_name | upper}}_H__
+#define __{{class_spec.cpp_name | upper}}_H__
 
 #include <iostream>
 #include <string>
 
-extern "C" {
-    #include <lauxlib.h>
-    #include <lua.h>
-    #include <lualib.h>
-}
-
-class {{class.cpp_name}} {
+class {{class_spec.cpp_name}} {
 public:
-    {{class.cpp_name}}();
-    ~{{class.cpp_name}}();
-    {% for prop in properties %}
-    {{prop.type}} {{prop.name}};
+    {{class_spec.cpp_name}}();
+    ~{{class_spec.cpp_name}}();
+
+    {% for prop in class_spec.properties %}{{ "%-16s " | format(prop.cpp_type)}} {{prop.name}};
     {% endfor %}
 
     boolean loadFromLuaScript(lua_State *L, char *luaPath);
 
 private:
+    // Private members go here
 }
 
-#endif  /* End __{{class.cpp_name | upper}}_H__ */
+#endif  /* End __{{class_spec.cpp_name | upper}}_H__ */
