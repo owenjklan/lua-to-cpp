@@ -12,10 +12,10 @@ public:
     {% for prop in class_spec.properties %}{{ "%-16s " | format(prop.cpp_type)}} {{prop.name}};
     {% endfor %}
 
-    boolean loadFromLuaScript(lua_State *L, char *luaPath);
+    bool loadFromLuaScript(lua_State *L, std::string *luaPath);
 
 private:
     // Private members go here
-}
+};
 
 #endif  /* End __{{class_spec.cpp_name | upper}}_H__ */

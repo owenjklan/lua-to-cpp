@@ -7,14 +7,12 @@ extern "C" {
     #include <lualib.h>
 }
 
-#include "{{class_spec.cpp_name}}.h"
+#include "{{class_spec.cpp_name}}.hpp"
 
 {{class_spec.cpp_name}}::{{class_spec.cpp_name}}() {}
 {{class_spec.cpp_name}}::~{{class_spec.cpp_name}}() {}
 
-extern "C" {
-    #include <lauxlib.h>
-    #include <lua.h>
-    #include <lualib.h>
+{{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, char *luaPath) {
+    // hi there
 }
 

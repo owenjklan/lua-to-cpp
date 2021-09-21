@@ -109,6 +109,20 @@ def main(in_file, output_dir, create_out_dir_flag):
         secho(f"Wrote {len(hpp_output)} bytes to {hpp_out_path}",
               fg="green", bold=True)
 
+    # Render the class source file .cpp template
+    cpp_output = _cpp_template.render(
+        class_spec=class_spec,
+        property_list=class_spec["properties"]
+    )
+
+    # Write the generated class source file to disk
+    cpp_out_path = os.path.join(output_dir, f"{class_spec['cpp_name']}.cpp")
+    with open(cpp_out_path, "w") as cpp_file:
+        cpp_file.write(cpp_output)
+        secho(f"Wrote {len(cpp_output)} bytes to {cpp_out_path}",
+              fg="green", bold=True)
+
+
 
 if __name__ == "__main__":
     main()
