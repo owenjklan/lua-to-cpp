@@ -1,0 +1,1 @@
+g++ example.cpp Player.cpp -o example `pkg-config --cflags --libs lua53`

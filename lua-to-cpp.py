@@ -36,13 +36,16 @@ def load_templates_or_die():
         _eg_lua_template = Template(
             open('templates/example.lua.j2', 'r').read().strip(),
         )
+        _build_template = Template(
+            open('templates/build_example.sh.j2', 'r').read().strip(),
+        )
     except Exception as e:
         secho("\nThere was an issue loading the base templates!",
               fg="red", bold=True)
         secho(f"{e}\n")
         secho("!!! Aborted !!!")
         sys.exit(1)
-    return _cpp_template, _hpp_template, _eg_lua_template
+    return _cpp_template, _hpp_template, _eg_lua_template, _build_template
 
 
 def load_class_spec_from_yaml(yaml_file_obj):
@@ -87,7 +90,7 @@ def main(in_file, output_dir, create_out_dir_flag):
     print(f"Reading class specification from file: {in_file.name}")
 
     # Load the base templates. Any problems are fatal.
-    _cpp_template, _hpp_template, _eg_lua_template = load_templates_or_die()
+    _cpp_template, _hpp_template, _eg_lua_template, _build_template = load_templates_or_die()
 
     # Remove one layer of dictionary keys
     class_spec = load_class_spec_from_yaml(in_file)
@@ -120,6 +123,18 @@ def main(in_file, output_dir, create_out_dir_flag):
     with open(cpp_out_path, "w") as cpp_file:
         cpp_file.write(cpp_output)
         secho(f"Wrote {len(cpp_output)} bytes to {cpp_out_path}",
+              fg="green", bold=True)
+
+    # Render the "build_example.sh" script for this class
+    build_output = _build_template.render(
+        class_spec=class_spec,
+    )
+
+    # Write the generated class source file to disk
+    build_out_path = os.path.join(output_dir, "build_example.sh")
+    with open(build_out_path, "w") as build_file:
+        build_file.write(build_output)
+        secho(f"Wrote {len(build_output)} bytes to {build_out_path}",
               fg="green", bold=True)
 
 
