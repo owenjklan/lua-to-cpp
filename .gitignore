@@ -1,3 +1,7 @@
+# For the python stuff
+venv/
+.idea/
+
 # Prerequisites
 *.d
 
