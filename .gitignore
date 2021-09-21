@@ -2,6 +2,9 @@
 venv/
 .idea/
 
+# vim swap files
+*.swp
+
 # our default example program name
 example
 

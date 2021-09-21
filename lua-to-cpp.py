@@ -14,10 +14,13 @@ def map_lua_type_to_cpp_type(property_list):
         prop_type = property["type"]
         if prop_type.lower() == "number":
             property["cpp_type"] = "float"
+            property["constructor_value"] = f"{property['default']:.6f}f"
         elif prop_type.lower() == "string":
             property["cpp_type"] = "std::string"
+            property["constructor_value"] = f"\"{property['default']}\""
         elif prop_type.lower() == "boolean":
             property["cpp_type"] = "bool"
+            property["constructor_value"] = f"{str(property['default']).lower()}"
         else:
             secho(f"Unknown property type in YAML: {prop_type}",
                   fg="red", bold=True)

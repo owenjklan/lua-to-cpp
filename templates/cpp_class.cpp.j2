@@ -3,7 +3,11 @@
 
 #include "{{class_spec.cpp_name}}.hpp"
 
-{{class_spec.cpp_name}}::{{class_spec.cpp_name}}() {}
+{{class_spec.cpp_name}}::{{class_spec.cpp_name}}() {
+    {% for prop in class_spec.properties -%}
+    {{prop.name}} = {{prop.constructor_value}};
+    {% endfor %}
+}
 {{class_spec.cpp_name}}::~{{class_spec.cpp_name}}() {}
 
 bool {{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, const char *luaPath) {

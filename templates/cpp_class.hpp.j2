@@ -15,7 +15,8 @@ public:
     {{class_spec.cpp_name}}();
     ~{{class_spec.cpp_name}}();
 
-    {% for prop in class_spec.properties %}{{ "%-16s " | format(prop.cpp_type)}} {{prop.name}};
+    {% for prop in class_spec.properties -%}
+    {{ "%-16s " | format(prop.cpp_type)}} {{prop.name}};
     {% endfor %}
 
     bool loadFromLuaScript(lua_State *L, const char *luaPath);

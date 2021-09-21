@@ -6,10 +6,16 @@ std::string exampleLuaPath = "example.lua";
 
 int main() {
     lua_State *L = luaL_newstate();
-    {{class_spec.cpp_name}} {{class_spec.cpp_name | lower}};
+    {{class_spec.cpp_name}} {{class_spec.cpp_name | lower}} = {{class_spec.cpp_name}}();
 
     // Open specified Lua libraries on our Lua VM/State
     luaL_openlibs(L);
+
+    std::cout << "Displaying defaults loaded from YAML template in constructor:" << std::endl;
+
+    {% for prop in class_spec.properties -%}
+    std::cout << "{{ "%-20s"| format(prop.name)}}: " << {{class_spec.cpp_name | lower}}.{{ prop.name }} << std::endl;
+    {% endfor %}
 
     {{class_spec.cpp_name | lower}}.loadFromLuaScript(L, exampleLuaPath.c_str());
 
