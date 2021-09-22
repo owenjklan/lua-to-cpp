@@ -157,8 +157,7 @@ def main(in_file, output_dir, create_out_dir_flag):
 
     # Render the "example.lua" example Lua script
     eg_lua_output = _eg_lua_template.render(
-        property_list=class_spec["properties"],
-        lua_table_name=class_spec["lua_table_name"],
+        class_spec=class_spec,
     )
 
     # Write the generated class source file to disk
