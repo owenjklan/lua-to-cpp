@@ -8,6 +8,9 @@ venv/
 # our default example program name
 example
 
+# default output directory
+output/
+
 # We actually want to ignore any *.cpp and *.hpp files, we generate those
 # but we use .j2 templates in the repos.
 *.cpp
