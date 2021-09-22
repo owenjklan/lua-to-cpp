@@ -155,6 +155,18 @@ def main(in_file, output_dir, create_out_dir_flag):
         secho(f"Wrote {len(eg_cpp_output)} bytes to {eg_cpp_out_path}",
               fg="green", bold=True)
 
+    # Render the "example.lua" example Lua script
+    eg_lua_output = _eg_lua_template.render(
+        property_list=class_spec["properties"],
+        lua_table_name=class_spec["lua_table_name"],
+    )
+
+    # Write the generated class source file to disk
+    eg_lua_out_path = os.path.join(output_dir, "example.lua")
+    with open(eg_lua_out_path, "w") as eg_lua_file:
+        eg_lua_file.write(eg_lua_output)
+        secho(f"Wrote {len(eg_lua_output)} bytes to {eg_lua_out_path}",
+              fg="green", bold=True)
 
 if __name__ == "__main__":
     main()

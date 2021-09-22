@@ -1,6 +1,7 @@
 # Player class, YAML spec for lua-to-cpp
 class:
   cpp_name: "Player"
+  lua_table_name: "player"
   properties:
     - name: "maxHealth"
       type: number
