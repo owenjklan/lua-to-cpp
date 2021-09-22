@@ -14,6 +14,26 @@
 bool {{class_spec.cpp_name}}::loadFromLuaScript(lua_State *L, const char *luaPath) {
     // hi there
     std::cout << "{{class_spec.cpp_name}}::loadFromLuaScript() called." << std::endl;
+
+    // "execute" our config file
+    luaL_dofile(L, "example.lua");
+
+    // TODO: Add success check!!
+
+    // Setup table access
+    lua_getglobal(L, "{{class_spec.lua_table_name}}");
+    if (lua_istable(L, -1)) {
+        {% for prop in class_spec.properties -%}
+        lua_pushstring(L, "{{prop.name}}");
+        lua_gettable(L, -2); // lookup our property in table
+        {% if prop.type == "string" %}{{prop.name}} = lua_tostring(L, -1);
+        {% elif prop.type == "boolean" %}{{prop.name}} = lua_toboolean(L, -1);
+        {% else %}{{prop.name}} = lua_tonumber(L, -1);
+        {% endif %}
+        lua_pop(L, 1);
+        {% endfor %}
+    }
+
     return true;
 }
 
