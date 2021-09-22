@@ -1,0 +1,20 @@
+# Level class, YAML spec for lua-to-cpp
+class:
+  cpp_name: "Level"
+  lua_table_name: "level"
+  properties:
+    - name: "levelNumber"
+      type: number
+      default: 1
+    - name: "levelName"
+      type: string
+      default: "Do androids dream of electric sheep?"
+    - name: "nextLevelScore"
+      type: number
+      default: 1000
+    - name: "nextLevelFile"
+      type: string
+      default: "level-02.lua"
+    - name: "isMultiplayer"
+      type: boolean
+      default: false
