@@ -28,36 +28,61 @@ def map_lua_type_to_cpp_type(property_list):
     return property_list
 
 
+# Define our template set.
+TEMPLATE_SET = {
+    "cpp_class.cpp.j2": {
+        "output_file": "%cpp_name.cpp"
+    },
+    "cpp_class.hpp.j2": {
+        "output_file": "%cpp_name.hpp",
+    },
+    "example.lua.j2": {
+        "output_file": "example.lua",
+    },
+    "example.cpp.j2": {
+        "output_file": "example.cpp",
+    },
+    "build_example.sh.j2": {
+        "output_file": "build_example.sh",
+    },
+}
+
+
 def load_templates_or_die():
-    try:
-        _cpp_template = Template(
-            open('templates/cpp_class.cpp.j2', 'r').read().strip(),
-        )
-        _hpp_template = Template(
-            open('templates/cpp_class.hpp.j2', 'r').read().strip(),
-        )
-        _eg_lua_template = Template(
-            open('templates/example.lua.j2', 'r').read().strip(),
-        )
-        _build_template = Template(
-            open('templates/build_example.sh.j2', 'r').read().strip(),
-        )
-        _eg_cpp_template = Template(
-            open('templates/example.cpp.j2', 'r').read().strip(),
-        )
-    except Exception as e:
-        secho("\nThere was an issue loading the base templates!",
-              fg="red", bold=True)
-        secho(f"{e}\n")
-        secho("!!! Aborted !!!")
-        sys.exit(1)
-    return _cpp_template, _hpp_template, _eg_lua_template, _build_template, _eg_cpp_template
+    loaded_templates = {}
+    templates_base_dir = "templates"
+    for template_file, details in TEMPLATE_SET.items():
+        try:
+            template_path = os.path.join(templates_base_dir, template_file)
+            # Add the loaded Template to the details
+            details["template"] = Template(
+                open(template_path, 'r').read().strip(),
+            )
+            loaded_templates[template_file] = details
+        except Exception as e:
+            secho("\nThere was an issue loading the base templates!",
+                  fg="red", bold=True)
+            secho(f"{e}\n")
+            secho("!!! Aborted !!!")
+            sys.exit(1)
+    return loaded_templates
 
 
 def load_class_spec_from_yaml(yaml_file_obj):
     # TODO: Exception handling
     info = yaml.load(yaml_file_obj, Loader=yaml.Loader)
     return info
+
+
+def determine_file_name(class_spec, supplied_fname):
+    file_name = supplied_fname
+
+    if file_name.startswith('%'):
+        lookup_property, filename_end = file_name.split('.', 1)
+        lookup_property = lookup_property[1:]
+        file_name = class_spec[lookup_property]
+        file_name = ".".join([file_name, filename_end])
+    return file_name
 
 
 @click.command()
@@ -96,76 +121,29 @@ def main(in_file, output_dir, create_out_dir_flag):
     print(f"Reading class specification from file: {in_file.name}")
 
     # Load the base templates. Any problems are fatal.
-    _cpp_template, _hpp_template, _eg_lua_template, _build_template, _eg_cpp_template = load_templates_or_die()
+    loaded_templates = load_templates_or_die()
 
-    # Remove one layer of dictionary keys
+    # Load our YAML file and remove one layer of dictionary keys
     class_spec = load_class_spec_from_yaml(in_file)
     class_spec = class_spec["class"]
 
     # Modify properties list in-place, mapping Lua types to C++ types
     class_spec["properties"] = map_lua_type_to_cpp_type(class_spec["properties"])
 
-    # Render the Header file .hpp template
-    hpp_output = _hpp_template.render(
-        class_spec=class_spec,
-        property_list=class_spec["properties"]
-    )
+    for template_file, template_details in loaded_templates.items():
+        template = template_details["template"]
+        gen_output = template.render(class_spec=class_spec,
+                                     property_list=class_spec["properties"],
+                                     lua_table_name=class_spec["lua_table_name"])
+        # Write the generated header file to disk
+        generated_file = determine_file_name(class_spec, template_details["output_file"])
 
-    # Write the generated header file to disk
-    hpp_out_path = os.path.join(output_dir, f"{class_spec['cpp_name']}.hpp")
-    with open(hpp_out_path, "w") as hpp_file:
-        hpp_file.write(hpp_output)
-        secho(f"Wrote {len(hpp_output)} bytes to {hpp_out_path}",
-              fg="green", bold=True)
+        gen_out_path = os.path.join(output_dir, f"{generated_file}")
+        with open(gen_out_path, "w") as gen_out_file:
+            gen_out_file.write(gen_output)
+            secho(f"Wrote {len(gen_output)} bytes to {gen_out_path}",
+                  fg="green", bold=True)
 
-    # Render the class source file .cpp template
-    cpp_output = _cpp_template.render(
-        class_spec=class_spec,
-        property_list=class_spec["properties"]
-    )
-
-    # Write the generated class source file to disk
-    cpp_out_path = os.path.join(output_dir, f"{class_spec['cpp_name']}.cpp")
-    with open(cpp_out_path, "w") as cpp_file:
-        cpp_file.write(cpp_output)
-        secho(f"Wrote {len(cpp_output)} bytes to {cpp_out_path}",
-              fg="green", bold=True)
-
-    # Render the "build_example.sh" script for this class
-    build_output = _build_template.render(
-        class_spec=class_spec,
-    )
-
-    # Write the generated class source file to disk
-    build_out_path = os.path.join(output_dir, "build_example.sh")
-    with open(build_out_path, "w") as build_file:
-        build_file.write(build_output)
-        secho(f"Wrote {len(build_output)} bytes to {build_out_path}",
-              fg="green", bold=True)
-
-    # Render the "example.cpp" main source file for our example
-    eg_cpp_output = _eg_cpp_template.render(
-        class_spec=class_spec,
-    )
-
-    # Write the generated class source file to disk
-    eg_cpp_out_path = os.path.join(output_dir, "example.cpp")
-    with open(eg_cpp_out_path, "w") as eg_cpp_file:
-        eg_cpp_file.write(eg_cpp_output)
-        secho(f"Wrote {len(eg_cpp_output)} bytes to {eg_cpp_out_path}",
-              fg="green", bold=True)
-
-    # Render the "example.lua" example Lua script
-    eg_lua_output = _eg_lua_template.render(
-        class_spec=class_spec,
-    )
-
-    # Write the generated class source file to disk
-    eg_lua_out_path = os.path.join(output_dir, "example.lua")
-    with open(eg_lua_out_path, "w") as eg_lua_file:
-        eg_lua_file.write(eg_lua_output)
-        secho(f"Wrote {len(eg_lua_output)} bytes to {eg_lua_out_path}",
-              fg="green", bold=True)
 
 if __name__ == "__main__":
     main()
